@@ -46,7 +46,8 @@ public class ShopController {
         // 写入数据库
         shopService.save(shop);
         // 返回店铺id
-        return Result.ok(shop.getId());
+        Long id = shop.getId();
+        return Result.ok(id);
     }
 
     /**
