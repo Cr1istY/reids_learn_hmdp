@@ -11,9 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleRedisLock implements ILock{
 
-    @Resource
     private StringRedisTemplate stringRedisTemplate;
-
     private final String name;
     private static final String KEY_PREFIX = "lock:";
     private static final String ID_PREFIX = UUID.randomUUID().toString(true) + "-";
@@ -24,8 +22,9 @@ public class SimpleRedisLock implements ILock{
         UNLOCK_SCRIPT.setResultType(Long.class);
     }
 
-    public SimpleRedisLock(String name) {
+    public SimpleRedisLock(String name, StringRedisTemplate stringRedisTemplate) {
         this.name = name;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override

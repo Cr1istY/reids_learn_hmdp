@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
  *  服务实现类
  * </p>
  *
- * @author 虎哥
+ * @author Crist Yang
  * @since 2021-12-22
  */
 @Service
@@ -35,6 +35,9 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
     @Resource
     private RedisIdWorker redisIdWorker;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Result seckillVoucher(Long voucherId) {
@@ -53,7 +56,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
             return Result.fail("库存不足");
         }
         Long userId = UserHolder.getUser().getId();
-        SimpleRedisLock lock = new SimpleRedisLock("order:" + userId);
+        SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
         boolean lockFlag = lock.tryLock(50L);
         if (lockFlag) {
             try {
