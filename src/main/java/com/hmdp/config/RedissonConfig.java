@@ -13,8 +13,8 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()
-                .setAddress("redis://localhost:6379")
-                .setPassword("123456");
+                .setAddress("redis://localhost:6379");
+//                .setPassword("");
         return Redisson.create(config);
     }
 }
