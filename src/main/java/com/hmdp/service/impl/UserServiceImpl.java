@@ -11,10 +11,7 @@ import com.hmdp.dto.UserDTO;
 import com.hmdp.entity.User;
 import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.IUserService;
-import com.hmdp.utils.RedisConstants;
-import com.hmdp.utils.RegexPatterns;
-import com.hmdp.utils.RegexUtils;
-import com.hmdp.utils.SystemConstants;
+import com.hmdp.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,8 +19,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -95,6 +94,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         stringRedisTemplate.expire(userToken, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);
 
         return Result.ok(token);
+    }
+
+    @Override
+    public Result logout(HttpServletRequest request) {
+        String name = UserHolder.getUser().getNickName();
+        LocalDateTime now = LocalDateTime.now();
+        String token = request.getHeader("authorization");
+        String tokenKey = RedisConstants.LOGIN_USER_KEY + token;
+        stringRedisTemplate.delete(tokenKey);
+        log.debug("用户{}退出登录", name);
+        UserHolder.removeUser();
+        return Result.ok();
     }
 
     private User createUserWithPhone(String phone) {
