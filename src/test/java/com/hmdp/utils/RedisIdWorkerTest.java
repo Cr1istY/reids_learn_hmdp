@@ -78,6 +78,19 @@ class RedisIdWorkerTest {
         }
     }
 
+    @Test
+    void testHyper() {
+        String[] values = new String[1000];
+        int j = 0;
+        for (int i = 0; i < 1000000; i++) {
+            j = i % 1000;
+            values[j] = "user_" + i;
+            if (j == 999) {
+                stringRedisTemplate.opsForHyperLogLog().add("hl1", values);
+            }
+        }
 
-
+        Long size = stringRedisTemplate.opsForHyperLogLog().size("hl1");
+        System.out.println("size = " + size);
+    }
 }
